@@ -1,8 +1,9 @@
-package eu.trustdemocracy.votes.core.interactors;
+package eu.trustdemocracy.votes.core.interactors.proposal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import eu.trustdemocracy.votes.core.interactors.proposal.RegisterProposal;
 import eu.trustdemocracy.votes.core.models.request.ProposalRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.ProposalResponseDTO;
 import eu.trustdemocracy.votes.gateways.FakeProposalsRepository;

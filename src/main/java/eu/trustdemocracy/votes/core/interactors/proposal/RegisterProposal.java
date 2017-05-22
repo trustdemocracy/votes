@@ -1,6 +1,7 @@
-package eu.trustdemocracy.votes.core.interactors;
+package eu.trustdemocracy.votes.core.interactors.proposal;
 
 import eu.trustdemocracy.votes.core.entities.utils.ProposalMapper;
+import eu.trustdemocracy.votes.core.interactors.Interactor;
 import eu.trustdemocracy.votes.core.models.request.ProposalRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.ProposalResponseDTO;
 import eu.trustdemocracy.votes.gateways.ProposalsRepository;
