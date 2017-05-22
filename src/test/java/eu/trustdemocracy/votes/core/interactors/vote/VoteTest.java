@@ -64,7 +64,82 @@ public class VoteTest {
 
     val interactor = new Vote(votesRepository, proposalsRepository, rankRepository, eventsGateway);
 
+
+    assertEquals(0, votesRepository.votes.size());
     VoteResponseDTO createdVote = interactor.execute(voteRequest);
+    assertEquals(1, votesRepository.votes.size());
+
+    assertEquals(proposalId, createdVote.getProposalId());
+    assertEquals(user.getId(), createdVote.getUserId());
+    assertEquals(user.getRank(), createdVote.getRank());
+  }
+
+  @Test
+  public void voteAgainst() {
+    val proposalId = UUID.randomUUID();
+    proposalsRepository.upsert(new Proposal()
+        .setId(proposalId)
+        .setDueDate(System.currentTimeMillis() + 10000)
+        .setActive(true));
+
+    val user = new User()
+        .setId(UUID.randomUUID())
+        .setUsername("username")
+        .setRank(0.5);
+
+    rankRepository.upsert(user);
+
+    VoteRequestDTO voteRequest = new VoteRequestDTO()
+        .setProposalId(proposalId)
+        .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
+        .setOption(VoteOption.AGAINST);
+
+    val interactor = new Vote(votesRepository, proposalsRepository, rankRepository, eventsGateway);
+
+    assertEquals(0, votesRepository.votes.size());
+    VoteResponseDTO createdVote = interactor.execute(voteRequest);
+    assertEquals(1, votesRepository.votes.size());
+
+    assertEquals(proposalId, createdVote.getProposalId());
+    assertEquals(user.getId(), createdVote.getUserId());
+    assertEquals(user.getRank(), createdVote.getRank());
+  }
+
+  @Test
+  public void withdrawVote() {
+    val proposalId = UUID.randomUUID();
+    proposalsRepository.upsert(new Proposal()
+        .setId(proposalId)
+        .setDueDate(System.currentTimeMillis() + 10000)
+        .setActive(true));
+
+    val user = new User()
+        .setId(UUID.randomUUID())
+        .setUsername("username")
+        .setRank(0.5);
+
+    rankRepository.upsert(user);
+
+    VoteRequestDTO voteRequest = new VoteRequestDTO()
+        .setProposalId(proposalId)
+        .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
+        .setOption(VoteOption.AGAINST);
+
+    val interactor = new Vote(votesRepository, proposalsRepository, rankRepository, eventsGateway);
+
+    assertEquals(0, votesRepository.votes.size());
+    VoteResponseDTO createdVote = interactor.execute(voteRequest);
+    assertEquals(1, votesRepository.votes.size());
+
+    assertEquals(proposalId, createdVote.getProposalId());
+    assertEquals(user.getId(), createdVote.getUserId());
+    assertEquals(user.getRank(), createdVote.getRank());
+
+    voteRequest.setOption(VoteOption.WITHDRAW);
+
+    assertEquals(1, votesRepository.votes.size());
+    createdVote = interactor.execute(voteRequest);
+    assertEquals(0, votesRepository.votes.size());
 
     assertEquals(proposalId, createdVote.getProposalId());
     assertEquals(user.getId(), createdVote.getUserId());
