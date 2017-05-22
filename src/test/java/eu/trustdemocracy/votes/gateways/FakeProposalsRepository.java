@@ -8,11 +8,11 @@ import lombok.val;
 
 public class FakeProposalsRepository implements ProposalsRepository {
 
-  public Map<UUID, Long> proposals = new HashMap<>();
+  public Map<UUID, Proposal> proposals = new HashMap<>();
 
   @Override
   public boolean upsert(Proposal proposal) {
-    val previousValue = proposals.put(proposal.getId(), proposal.getDueDate());
+    val previousValue = proposals.put(proposal.getId(), proposal);
     return null != previousValue;
   }
 }
