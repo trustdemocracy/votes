@@ -41,7 +41,8 @@ public class UnregisterProposalTest {
 
     ProposalResponseDTO proposalResponse = interactor.execute(proposalRequest);
 
-    assertFalse(registeredProposal.isActive());
+    val unregisteredProposal = proposalsRepository.proposals.get(proposalId);
+    assertFalse(unregisteredProposal.isActive());
 
     assertEquals(dueDate, proposalResponse.getDueDate());
     assertEquals(proposalId, proposalResponse.getId());

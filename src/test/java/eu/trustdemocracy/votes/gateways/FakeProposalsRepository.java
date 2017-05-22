@@ -13,6 +13,11 @@ public class FakeProposalsRepository implements ProposalsRepository {
   @Override
   public boolean upsert(Proposal proposal) {
     val previousValue = proposals.put(proposal.getId(), proposal);
-    return null != previousValue;
+
+    if (previousValue != null) {
+      proposals.replace(proposal.getId(), proposal);
+    }
+
+    return false;
   }
 }
