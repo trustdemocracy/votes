@@ -1,10 +1,11 @@
 package eu.trustdemocracy.votes.gateways;
 
 import eu.trustdemocracy.votes.core.entities.Vote;
+import eu.trustdemocracy.votes.core.entities.VoteOption;
 
 public interface VotesRepository {
 
-  void upsert(Vote vote);
+  VoteOption upsert(Vote vote);
 
-  void remove(Vote vote);
+  VoteOption remove(Vote vote);
 }

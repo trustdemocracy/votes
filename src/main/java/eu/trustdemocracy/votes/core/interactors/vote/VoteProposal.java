@@ -22,6 +22,7 @@ public class VoteProposal implements Interactor<VoteRequestDTO, VoteResponseDTO>
   private ProposalsRepository proposalsRepository;
   private RankRepository rankRepository;
   private EventsGateway eventsGateway;
+  private ProposalsGateway proposalsGateway;
 
   public VoteProposal(
       VotesRepository votesRepository,
@@ -34,6 +35,7 @@ public class VoteProposal implements Interactor<VoteRequestDTO, VoteResponseDTO>
     this.proposalsRepository = proposalsRepository;
     this.rankRepository = rankRepository;
     this.eventsGateway = eventsGateway;
+    this.proposalsGateway = proposalsGateway;
   }
 
   @Override
@@ -47,15 +49,17 @@ public class VoteProposal implements Interactor<VoteRequestDTO, VoteResponseDTO>
     }
     checkProposalIsValid(proposal);
 
+    VoteOption previousOption;
     if (isWithdrawing(vote)) {
-      votesRepository.remove(vote);
+      previousOption = votesRepository.remove(vote);
     } else {
-      votesRepository.upsert(vote);
+      previousOption = votesRepository.upsert(vote);
     }
 
     val rank = rankRepository.find(vote.getUser().getId());
     vote.getUser().setRank(rank);
 
+    proposalsGateway.updateProposal(vote, previousOption);
     eventsGateway.createVoteEvent(vote);
 
     return VoteMapper.createResponse(vote);

@@ -10,15 +10,15 @@ public class FakeVotesRepository implements VotesRepository {
   public Map<String, VoteOption> votes = new HashMap<>();
 
   @Override
-  public void upsert(Vote vote) {
+  public VoteOption upsert(Vote vote) {
     String key = getKey(vote);
-    votes.put(key, vote.getOption());
+    return votes.put(key, vote.getOption());
   }
 
   @Override
-  public void remove(Vote vote) {
+  public VoteOption remove(Vote vote) {
     String key = getKey(vote);
-    votes.remove(key);
+    return votes.remove(key);
   }
 
   private static String getKey(Vote vote) {
