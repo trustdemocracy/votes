@@ -1,8 +1,10 @@
 package eu.trustdemocracy.votes.gateways;
 
-import eu.trustdemocracy.votes.core.entities.User;
+import java.util.UUID;
 
 public interface RankRepository {
 
-  boolean upsert(User user);
+  void upsert(UUID userId, Double rank);
+
+  Double find(UUID id);
 }

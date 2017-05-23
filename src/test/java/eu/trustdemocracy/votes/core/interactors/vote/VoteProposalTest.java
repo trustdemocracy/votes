@@ -18,7 +18,7 @@ import org.jose4j.lang.JoseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class VoteTest {
+public class VoteProposalTest {
 
   private FakeProposalsRepository proposalsRepository;
   private FakeVotesRepository votesRepository;
@@ -55,14 +55,14 @@ public class VoteTest {
         .setUsername("username")
         .setRank(0.5);
 
-    rankRepository.upsert(user);
+    rankRepository.upsert(user.getId(), user.getRank());
 
     VoteRequestDTO voteRequest = new VoteRequestDTO()
         .setProposalId(proposalId)
         .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
         .setOption(VoteOption.FAVOUR);
 
-    val interactor = new Vote(votesRepository, proposalsRepository, rankRepository, eventsGateway);
+    val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository, eventsGateway);
 
 
     assertEquals(0, votesRepository.votes.size());
@@ -87,14 +87,14 @@ public class VoteTest {
         .setUsername("username")
         .setRank(0.5);
 
-    rankRepository.upsert(user);
+    rankRepository.upsert(user.getId(), user.getRank());
 
     VoteRequestDTO voteRequest = new VoteRequestDTO()
         .setProposalId(proposalId)
         .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
         .setOption(VoteOption.AGAINST);
 
-    val interactor = new Vote(votesRepository, proposalsRepository, rankRepository, eventsGateway);
+    val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository, eventsGateway);
 
     assertEquals(0, votesRepository.votes.size());
     VoteResponseDTO createdVote = interactor.execute(voteRequest);
@@ -118,14 +118,14 @@ public class VoteTest {
         .setUsername("username")
         .setRank(0.5);
 
-    rankRepository.upsert(user);
+    rankRepository.upsert(user.getId(), user.getRank());
 
     VoteRequestDTO voteRequest = new VoteRequestDTO()
         .setProposalId(proposalId)
         .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
         .setOption(VoteOption.AGAINST);
 
-    val interactor = new Vote(votesRepository, proposalsRepository, rankRepository, eventsGateway);
+    val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository, eventsGateway);
 
     assertEquals(0, votesRepository.votes.size());
     VoteResponseDTO createdVote = interactor.execute(voteRequest);

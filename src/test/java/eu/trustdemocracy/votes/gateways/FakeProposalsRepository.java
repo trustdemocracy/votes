@@ -20,4 +20,9 @@ public class FakeProposalsRepository implements ProposalsRepository {
 
     return false;
   }
+
+  @Override
+  public Proposal find(UUID id) {
+    return proposals.get(id);
+  }
 }
