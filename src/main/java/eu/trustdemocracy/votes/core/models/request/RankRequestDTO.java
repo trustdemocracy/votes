@@ -11,4 +11,5 @@ import lombok.experimental.Accessors;
 public class RankRequestDTO {
 
   private Map<UUID, Double> rankings = new HashMap<>();
+  private Long calculatedTime;
 }

@@ -9,9 +9,11 @@ import eu.trustdemocracy.votes.core.interactors.util.TokenUtils;
 import eu.trustdemocracy.votes.core.models.request.VoteRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.VoteResponseDTO;
 import eu.trustdemocracy.votes.gateways.FakeEventsGateway;
+import eu.trustdemocracy.votes.gateways.FakeProposalsGateway;
 import eu.trustdemocracy.votes.gateways.FakeProposalsRepository;
 import eu.trustdemocracy.votes.gateways.FakeRankRepository;
 import eu.trustdemocracy.votes.gateways.FakeVotesRepository;
+import java.util.Random;
 import java.util.UUID;
 import lombok.val;
 import org.jose4j.lang.JoseException;
@@ -24,6 +26,9 @@ public class VoteProposalTest {
   private FakeVotesRepository votesRepository;
   private FakeRankRepository rankRepository;
   private FakeEventsGateway eventsGateway;
+  private FakeProposalsGateway proposalsGateway;
+
+  private Random rand = new Random();
 
   @BeforeEach
   public void init() throws JoseException {
@@ -33,6 +38,7 @@ public class VoteProposalTest {
     votesRepository = new FakeVotesRepository();
     rankRepository = new FakeRankRepository();
     eventsGateway = new FakeEventsGateway();
+    proposalsGateway = new FakeProposalsGateway();
 
     for (int i = 0; i < 10; i++) {
       proposalsRepository.upsert(new Proposal()
@@ -50,10 +56,11 @@ public class VoteProposalTest {
         .setDueDate(System.currentTimeMillis() + 10000)
         .setActive(true));
 
+    double userRank = rand.nextDouble();
     val user = new User()
         .setId(UUID.randomUUID())
         .setUsername("username")
-        .setRank(0.5);
+        .setRank(userRank);
 
     rankRepository.upsert(user.getId(), user.getRank());
 
@@ -63,7 +70,7 @@ public class VoteProposalTest {
         .setOption(VoteOption.FAVOUR);
 
     val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository,
-        eventsGateway);
+        eventsGateway, proposalsGateway);
 
     assertEquals(0, votesRepository.votes.size());
     VoteResponseDTO createdVote = interactor.execute(voteRequest);
@@ -72,6 +79,10 @@ public class VoteProposalTest {
     assertEquals(proposalId, createdVote.getProposalId());
     assertEquals(user.getId(), createdVote.getUserId());
     assertEquals(user.getRank(), createdVote.getRank());
+
+    val updatedProposal = proposalsGateway.proposals.get(proposalId);
+    assertEquals(userRank, updatedProposal.get(VoteOption.FAVOUR), 0);
+    assertEquals(0.0, updatedProposal.get(VoteOption.AGAINST), 0);
   }
 
   @Test
@@ -82,10 +93,11 @@ public class VoteProposalTest {
         .setDueDate(System.currentTimeMillis() + 10000)
         .setActive(true));
 
+    double userRank = rand.nextDouble();
     val user = new User()
         .setId(UUID.randomUUID())
         .setUsername("username")
-        .setRank(0.5);
+        .setRank(userRank);
 
     rankRepository.upsert(user.getId(), user.getRank());
 
@@ -95,7 +107,7 @@ public class VoteProposalTest {
         .setOption(VoteOption.AGAINST);
 
     val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository,
-        eventsGateway);
+        eventsGateway, proposalsGateway);
 
     assertEquals(0, votesRepository.votes.size());
     VoteResponseDTO createdVote = interactor.execute(voteRequest);
@@ -104,6 +116,10 @@ public class VoteProposalTest {
     assertEquals(proposalId, createdVote.getProposalId());
     assertEquals(user.getId(), createdVote.getUserId());
     assertEquals(user.getRank(), createdVote.getRank());
+
+    val updatedProposal = proposalsGateway.proposals.get(proposalId);
+    assertEquals(0.0, updatedProposal.get(VoteOption.FAVOUR), 0);
+    assertEquals(userRank, updatedProposal.get(VoteOption.AGAINST), 0);
   }
 
   @Test
@@ -114,10 +130,11 @@ public class VoteProposalTest {
         .setDueDate(System.currentTimeMillis() + 10000)
         .setActive(true));
 
+    double userRank = rand.nextDouble();
     val user = new User()
         .setId(UUID.randomUUID())
         .setUsername("username")
-        .setRank(0.5);
+        .setRank(userRank);
 
     rankRepository.upsert(user.getId(), user.getRank());
 
@@ -127,7 +144,7 @@ public class VoteProposalTest {
         .setOption(VoteOption.AGAINST);
 
     val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository,
-        eventsGateway);
+        eventsGateway, proposalsGateway);
 
     assertEquals(0, votesRepository.votes.size());
     VoteResponseDTO createdVote = interactor.execute(voteRequest);
@@ -146,5 +163,10 @@ public class VoteProposalTest {
     assertEquals(proposalId, createdVote.getProposalId());
     assertEquals(user.getId(), createdVote.getUserId());
     assertEquals(user.getRank(), createdVote.getRank());
+
+
+    val updatedProposal = proposalsGateway.proposals.get(proposalId);
+    assertEquals(0.0, updatedProposal.get(VoteOption.FAVOUR), 0);
+    assertEquals(0.0, updatedProposal.get(VoteOption.AGAINST), 0);
   }
 }

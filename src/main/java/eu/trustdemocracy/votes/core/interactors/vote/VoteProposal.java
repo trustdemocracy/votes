@@ -10,6 +10,7 @@ import eu.trustdemocracy.votes.core.interactors.exceptions.ResourceNotFoundExcep
 import eu.trustdemocracy.votes.core.models.request.VoteRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.VoteResponseDTO;
 import eu.trustdemocracy.votes.gateways.EventsGateway;
+import eu.trustdemocracy.votes.gateways.ProposalsGateway;
 import eu.trustdemocracy.votes.gateways.ProposalsRepository;
 import eu.trustdemocracy.votes.gateways.RankRepository;
 import eu.trustdemocracy.votes.gateways.VotesRepository;
@@ -26,7 +27,8 @@ public class VoteProposal implements Interactor<VoteRequestDTO, VoteResponseDTO>
       VotesRepository votesRepository,
       ProposalsRepository proposalsRepository,
       RankRepository rankRepository,
-      EventsGateway eventsGateway
+      EventsGateway eventsGateway,
+      ProposalsGateway proposalsGateway
   ) {
     this.votesRepository = votesRepository;
     this.proposalsRepository = proposalsRepository;
