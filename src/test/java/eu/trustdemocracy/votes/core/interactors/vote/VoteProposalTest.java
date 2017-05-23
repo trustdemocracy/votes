@@ -62,8 +62,8 @@ public class VoteProposalTest {
         .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
         .setOption(VoteOption.FAVOUR);
 
-    val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository, eventsGateway);
-
+    val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository,
+        eventsGateway);
 
     assertEquals(0, votesRepository.votes.size());
     VoteResponseDTO createdVote = interactor.execute(voteRequest);
@@ -94,7 +94,8 @@ public class VoteProposalTest {
         .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
         .setOption(VoteOption.AGAINST);
 
-    val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository, eventsGateway);
+    val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository,
+        eventsGateway);
 
     assertEquals(0, votesRepository.votes.size());
     VoteResponseDTO createdVote = interactor.execute(voteRequest);
@@ -125,7 +126,8 @@ public class VoteProposalTest {
         .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
         .setOption(VoteOption.AGAINST);
 
-    val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository, eventsGateway);
+    val interactor = new VoteProposal(votesRepository, proposalsRepository, rankRepository,
+        eventsGateway);
 
     assertEquals(0, votesRepository.votes.size());
     VoteResponseDTO createdVote = interactor.execute(voteRequest);

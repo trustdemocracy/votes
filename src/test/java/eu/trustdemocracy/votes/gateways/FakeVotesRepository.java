@@ -11,7 +11,17 @@ public class FakeVotesRepository implements VotesRepository {
 
   @Override
   public void upsert(Vote vote) {
-    String key = vote.getProposal().getId() + "|" + vote.getUser().getId();
+    String key = getKey(vote);
     votes.put(key, vote.getOption());
+  }
+
+  @Override
+  public void remove(Vote vote) {
+    String key = getKey(vote);
+    votes.remove(key);
+  }
+
+  private static String getKey(Vote vote) {
+    return vote.getProposal().getId() + "|" + vote.getUser().getId();
   }
 }

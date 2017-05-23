@@ -1,6 +1,8 @@
 package eu.trustdemocracy.votes.core.interactors.vote;
 
 import eu.trustdemocracy.votes.core.entities.Proposal;
+import eu.trustdemocracy.votes.core.entities.Vote;
+import eu.trustdemocracy.votes.core.entities.VoteOption;
 import eu.trustdemocracy.votes.core.entities.utils.VoteMapper;
 import eu.trustdemocracy.votes.core.interactors.Interactor;
 import eu.trustdemocracy.votes.core.interactors.exceptions.ProposalDueException;
@@ -43,7 +45,11 @@ public class VoteProposal implements Interactor<VoteRequestDTO, VoteResponseDTO>
     }
     checkProposalIsValid(proposal);
 
-    votesRepository.upsert(vote);
+    if (isWithdrawing(vote)) {
+      votesRepository.remove(vote);
+    } else {
+      votesRepository.upsert(vote);
+    }
 
     val rank = rankRepository.find(vote.getUser().getId());
     vote.getUser().setRank(rank);
@@ -52,7 +58,6 @@ public class VoteProposal implements Interactor<VoteRequestDTO, VoteResponseDTO>
 
     return VoteMapper.createResponse(vote);
   }
-
 
   private static void checkProposalIsValid(Proposal proposal) {
     if (!proposal.isActive()) {
@@ -63,5 +68,9 @@ public class VoteProposal implements Interactor<VoteRequestDTO, VoteResponseDTO>
     if (proposal.getDueDate() <= System.currentTimeMillis()) {
       throw new ProposalDueException("The proposal [" + proposal.getId() + "] is due");
     }
+  }
+
+  private static boolean isWithdrawing(Vote vote) {
+    return vote.getOption().equals(VoteOption.WITHDRAW);
   }
 }
