@@ -97,7 +97,7 @@ public class GetVoteTest {
     assertEquals(user.getId(), responseDTO.getUserId());
     assertEquals(proposal.getId(), responseDTO.getProposalId());
     assertEquals(option, responseDTO.getOption());
-    assertEquals(updatedRank, responseDTO.getRank());
+    assertEquals(null, responseDTO.getRank());
     assertFalse(responseDTO.isProposalLocked());
   }
 
@@ -125,7 +125,7 @@ public class GetVoteTest {
   @Test
   public void getVoteInExpired() throws Exception {
     Proposal proposal = proposals.stream()
-        .filter(Proposal::isExpired)
+        .filter(p -> p.isExpired() && p.isActive())
         .findFirst()
         .orElseThrow(Exception::new);
 
@@ -133,10 +133,7 @@ public class GetVoteTest {
     val key = proposal.getId() + "|" + user.getId();
     votesRepository.votes.put(key, option);
     votesRepository.lockedRanks.put(key, user.getRank());
-
-    new UnregisterProposal(proposalsRepository).execute(new ProposalRequestDTO()
-        .setId(proposal.getId()));
-
+    
     GetVoteRequestDTO requestDTO = new GetVoteRequestDTO()
         .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
         .setProposalId(proposal.getId());

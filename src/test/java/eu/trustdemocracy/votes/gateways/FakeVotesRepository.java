@@ -69,8 +69,9 @@ public class FakeVotesRepository implements VotesRepository {
 
   @Override
   public Vote findWithRank(UUID proposalId, UUID userId) {
-    VoteOption option = votes.get(proposalId + "|" + userId);
-    Double rank = rankings.get(userId);
+    val key = proposalId + "|" + userId;
+    VoteOption option = votes.get(key);
+    Double rank = lockedRanks.get(key);
 
     return new Vote()
         .setProposal(new Proposal().setId(proposalId))

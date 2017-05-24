@@ -19,6 +19,7 @@ public final class VoteMapper {
         .setProposalId(vote.getProposal().getId())
         .setUserId(vote.getUser().getId())
         .setRank(vote.getUser().getRank())
-        .setOption(vote.getOption());
+        .setOption(vote.getOption())
+        .setProposalLocked(vote.getProposal().isExpired());
   }
 }
