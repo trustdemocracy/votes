@@ -3,21 +3,27 @@ package eu.trustdemocracy.votes.core.interactors.vote;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import eu.trustdemocracy.votes.core.entities.Proposal;
 import eu.trustdemocracy.votes.core.entities.User;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
 import eu.trustdemocracy.votes.core.interactors.exceptions.ResourceNotFoundException;
 import eu.trustdemocracy.votes.core.interactors.proposal.UnregisterProposal;
+import eu.trustdemocracy.votes.core.interactors.rank.UpdateRank;
 import eu.trustdemocracy.votes.core.interactors.util.TokenUtils;
 import eu.trustdemocracy.votes.core.models.request.GetVoteRequestDTO;
 import eu.trustdemocracy.votes.core.models.request.ProposalRequestDTO;
+import eu.trustdemocracy.votes.core.models.request.RankRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.VoteResponseDTO;
+import eu.trustdemocracy.votes.gateways.FakeProposalsGateway;
 import eu.trustdemocracy.votes.gateways.FakeProposalsRepository;
 import eu.trustdemocracy.votes.gateways.FakeRankRepository;
 import eu.trustdemocracy.votes.gateways.FakeVotesRepository;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import lombok.val;
@@ -35,6 +41,7 @@ public class GetVoteTest {
 
   private List<Proposal> proposals = new ArrayList<>();
   private User user;
+  private Double updatedRank = rand.nextDouble();
 
   @BeforeEach
   public void init() throws JoseException {
@@ -59,6 +66,15 @@ public class GetVoteTest {
       proposals.add(proposal);
       proposalsRepository.upsert(proposal);
     }
+
+    Map<UUID, Double> ranks = new HashMap<>();
+    ranks.put(user.getId(), updatedRank);
+
+    new UpdateRank(rankRepository, proposalsRepository, votesRepository,
+        new FakeProposalsGateway())
+        .execute(new RankRequestDTO()
+            .setCalculatedTime(System.currentTimeMillis())
+            .setRankings(ranks));
   }
 
   @Test
@@ -81,7 +97,7 @@ public class GetVoteTest {
     assertEquals(user.getId(), responseDTO.getUserId());
     assertEquals(proposal.getId(), responseDTO.getProposalId());
     assertEquals(option, responseDTO.getOption());
-    assertEquals(user.getRank(), responseDTO.getRank());
+    assertEquals(updatedRank, responseDTO.getRank());
     assertFalse(responseDTO.isProposalLocked());
   }
 
@@ -104,5 +120,34 @@ public class GetVoteTest {
 
     assertThrows(ResourceNotFoundException.class,
         () -> new GetVote(votesRepository, proposalsRepository).execute(requestDTO));
+  }
+
+  @Test
+  public void getVoteInExpired() throws Exception {
+    Proposal proposal = proposals.stream()
+        .filter(Proposal::isExpired)
+        .findFirst()
+        .orElseThrow(Exception::new);
+
+    val option = VoteOption.AGAINST;
+    val key = proposal.getId() + "|" + user.getId();
+    votesRepository.votes.put(key, option);
+    votesRepository.lockedRanks.put(key, user.getRank());
+
+    new UnregisterProposal(proposalsRepository).execute(new ProposalRequestDTO()
+        .setId(proposal.getId()));
+
+    GetVoteRequestDTO requestDTO = new GetVoteRequestDTO()
+        .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
+        .setProposalId(proposal.getId());
+
+    VoteResponseDTO responseDTO = new GetVote(votesRepository, proposalsRepository)
+        .execute(requestDTO);
+
+    assertEquals(user.getId(), responseDTO.getUserId());
+    assertEquals(proposal.getId(), responseDTO.getProposalId());
+    assertEquals(option, responseDTO.getOption());
+    assertEquals(user.getRank(), responseDTO.getRank());
+    assertTrue(responseDTO.isProposalLocked());
   }
 }

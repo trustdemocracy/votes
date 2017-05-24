@@ -17,7 +17,9 @@ import lombok.val;
 public class FakeVotesRepository implements VotesRepository {
 
   public Map<String, VoteOption> votes = new HashMap<>();
+  public Map<String, Double> lockedRanks = new HashMap<>();
   public Map<UUID, Double> rankings = new HashMap<>();
+
 
   public FakeVotesRepository(Map<UUID, Double> rankings) {
     this.rankings = rankings;
