@@ -7,6 +7,7 @@ import eu.trustdemocracy.votes.core.models.response.RankResponseDTO;
 import eu.trustdemocracy.votes.gateways.ProposalsGateway;
 import eu.trustdemocracy.votes.gateways.ProposalsRepository;
 import eu.trustdemocracy.votes.gateways.RankRepository;
+import eu.trustdemocracy.votes.gateways.VotesRepository;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -16,11 +17,13 @@ public class UpdateRank implements Interactor<RankRequestDTO, RankResponseDTO> {
 
   private RankRepository rankRepository;
   private ProposalsRepository proposalsRepository;
+  private VotesRepository votesRepository;
   private ProposalsGateway proposalsGateway;
 
   public UpdateRank(
       RankRepository rankRepository,
       ProposalsRepository proposalsRepository,
+      VotesRepository votesRepository,
       ProposalsGateway proposalsGateway
   ) {
     this.rankRepository = rankRepository;
