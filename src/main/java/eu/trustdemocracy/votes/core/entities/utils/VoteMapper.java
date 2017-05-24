@@ -18,6 +18,7 @@ public final class VoteMapper {
     return new VoteResponseDTO()
         .setProposalId(vote.getProposal().getId())
         .setUserId(vote.getUser().getId())
-        .setRank(vote.getUser().getRank());
+        .setRank(vote.getUser().getRank())
+        .setOption(vote.getOption());
   }
 }

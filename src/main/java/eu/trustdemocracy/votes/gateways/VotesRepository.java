@@ -11,5 +11,7 @@ public interface VotesRepository {
 
   VoteOption remove(Vote vote);
 
-  Map<VoteOption, Double> findWithRank(UUID id);
+  Map<VoteOption, Double> findWithRank(UUID proposalId);
+
+  Vote findWithRank(UUID proposalId, UUID userId);
 }

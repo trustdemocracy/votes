@@ -1,5 +1,7 @@
 package eu.trustdemocracy.votes.gateways;
 
+import eu.trustdemocracy.votes.core.entities.Proposal;
+import eu.trustdemocracy.votes.core.entities.User;
 import eu.trustdemocracy.votes.core.entities.Vote;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
 import java.util.Collection;
@@ -34,13 +36,13 @@ public class FakeVotesRepository implements VotesRepository {
   }
 
   @Override
-  public Map<VoteOption, Double> findWithRank(UUID id) {
+  public Map<VoteOption, Double> findWithRank(UUID proposalId) {
     ConcurrentMap<VoteOption, Double> accumulator = new ConcurrentHashMap<>();
 
     return votes.entrySet().stream()
         .reduce(accumulator,
             (map, entry) -> {
-              if (!entry.getKey().contains(id + "|")) {
+              if (!entry.getKey().contains(proposalId + "|")) {
                 return map;
               }
 
@@ -61,6 +63,17 @@ public class FakeVotesRepository implements VotesRepository {
                         Map.Entry::getValue,
                         Double::sum
                     )));
+  }
+
+  @Override
+  public Vote findWithRank(UUID proposalId, UUID userId) {
+    VoteOption option = votes.get(proposalId + "|" + userId);
+    Double rank = rankings.get(userId);
+
+    return new Vote()
+        .setProposal(new Proposal().setId(proposalId))
+        .setUser(new User().setId(userId).setRank(rank))
+        .setOption(option);
   }
 
   private static String getKey(Vote vote) {

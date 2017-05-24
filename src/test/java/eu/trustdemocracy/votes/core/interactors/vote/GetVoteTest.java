@@ -8,7 +8,7 @@ import eu.trustdemocracy.votes.core.entities.User;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
 import eu.trustdemocracy.votes.core.interactors.util.TokenUtils;
 import eu.trustdemocracy.votes.core.models.request.GetVoteRequestDTO;
-import eu.trustdemocracy.votes.core.models.response.GetVoteResponseDTO;
+import eu.trustdemocracy.votes.core.models.response.VoteResponseDTO;
 import eu.trustdemocracy.votes.gateways.FakeProposalsRepository;
 import eu.trustdemocracy.votes.gateways.FakeRankRepository;
 import eu.trustdemocracy.votes.gateways.FakeVotesRepository;
@@ -71,7 +71,7 @@ public class GetVoteTest {
         .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
         .setProposalId(proposal.getId());
 
-    GetVoteResponseDTO responseDTO = new GetVote(votesRepository).execute(requestDTO);
+    VoteResponseDTO responseDTO = new GetVote(votesRepository).execute(requestDTO);
 
     assertEquals(user.getId(), responseDTO.getUserId());
     assertEquals(proposal.getId(), responseDTO.getProposalId());
