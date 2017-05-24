@@ -20,6 +20,10 @@ public class UnregisterProposal implements Interactor<ProposalRequestDTO, Propos
     val proposal = ProposalMapper.createEntity(requestDTO);
 
     proposal.setActive(false);
+
+    val foundProposal = proposalsRepository.find(proposal.getId());
+    proposal.setDueDate(foundProposal.getDueDate());
+
     proposalsRepository.upsert(proposal);
 
     return ProposalMapper.createResponse(proposal);

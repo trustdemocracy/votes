@@ -2,12 +2,16 @@ package eu.trustdemocracy.votes.core.interactors.vote;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import eu.trustdemocracy.votes.core.entities.Proposal;
 import eu.trustdemocracy.votes.core.entities.User;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
+import eu.trustdemocracy.votes.core.interactors.exceptions.ResourceNotFoundException;
+import eu.trustdemocracy.votes.core.interactors.proposal.UnregisterProposal;
 import eu.trustdemocracy.votes.core.interactors.util.TokenUtils;
 import eu.trustdemocracy.votes.core.models.request.GetVoteRequestDTO;
+import eu.trustdemocracy.votes.core.models.request.ProposalRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.VoteResponseDTO;
 import eu.trustdemocracy.votes.gateways.FakeProposalsRepository;
 import eu.trustdemocracy.votes.gateways.FakeRankRepository;
@@ -78,5 +82,26 @@ public class GetVoteTest {
     assertEquals(option, responseDTO.getOption());
     assertEquals(user.getRank(), responseDTO.getRank());
     assertFalse(responseDTO.isProposalLocked());
+  }
+
+  @Test
+  public void getVoteInUnpublished() throws Exception {
+    Proposal proposal = proposals.stream()
+        .filter(p -> !p.isActive())
+        .findFirst()
+        .orElseThrow(Exception::new);
+
+    val option = VoteOption.AGAINST;
+    votesRepository.votes.put(proposal.getId() + "|" + user.getId(), option);
+
+    new UnregisterProposal(proposalsRepository).execute(new ProposalRequestDTO()
+        .setId(proposal.getId()));
+
+    GetVoteRequestDTO requestDTO = new GetVoteRequestDTO()
+        .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
+        .setProposalId(proposal.getId());
+
+    assertThrows(ResourceNotFoundException.class,
+        () -> new GetVote(votesRepository).execute(requestDTO));
   }
 }
