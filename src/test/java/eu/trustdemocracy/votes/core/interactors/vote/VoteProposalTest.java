@@ -165,7 +165,6 @@ public class VoteProposalTest {
     assertEquals(user.getId(), createdVote.getUserId());
     assertEquals(user.getRank(), createdVote.getRank());
 
-
     val updatedProposal = proposalsGateway.proposals.get(proposalId);
     assertNull(updatedProposal.get(VoteOption.FAVOUR));
     assertEquals(0.0, updatedProposal.get(VoteOption.AGAINST), 0.1);
