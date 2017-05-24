@@ -1,5 +1,6 @@
 package eu.trustdemocracy.votes.gateways;
 
+import eu.trustdemocracy.votes.core.entities.Proposal;
 import eu.trustdemocracy.votes.core.entities.Vote;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
 import java.util.HashMap;
@@ -35,5 +36,14 @@ public class FakeProposalsGateway implements ProposalsGateway {
     }
 
     proposals.put(proposalId, currentProposal);
+  }
+
+  @Override
+  public void updateBatch(Map<Proposal, Map<VoteOption, Double>> proposals) {
+    for (val proposal : proposals.entrySet()) {
+      if (!proposal.getKey().isExpired()) {
+        this.proposals.put(proposal.getKey().getId(), proposal.getValue());
+      }
+    }
   }
 }

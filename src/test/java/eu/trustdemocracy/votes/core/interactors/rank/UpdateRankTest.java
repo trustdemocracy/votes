@@ -36,25 +36,27 @@ public class UpdateRankTest {
   private Proposal activeProposal;
 
   private User[] favourUsers = new User[10];
-  private User[] aginstUsers = new User[10];
+  private User[] againstUsers = new User[10];
 
   private double favourTotal = 0;
   private double againstTotal = 0;
+
+  private long lastCalculatedRank;
 
   @BeforeEach
   public void init() {
     this.rankRepository = new FakeRankRepository();
     this.proposalsRepository = new FakeProposalsRepository();
-    this.votesRepository = new FakeVotesRepository();
+    this.votesRepository = new FakeVotesRepository(this.rankRepository.rankings);
     this.proposalsGateway = new FakeProposalsGateway();
 
     createProposals();
     createVotes(favourUsers, VoteOption.FAVOUR);
-    createVotes(aginstUsers, VoteOption.AGAINST);
+    createVotes(againstUsers, VoteOption.AGAINST);
   }
 
   private void createProposals() {
-    long lastCalculatedRank = System.currentTimeMillis() - 60 * 1000;
+    lastCalculatedRank = System.currentTimeMillis() - 60 * 1000;
 
     dueProposal = new Proposal()
         .setId(UUID.randomUUID())
@@ -99,14 +101,13 @@ public class UpdateRankTest {
 
   @Test
   public void updateRank() {
-    int amountOfUsers = 100;
-    long calculatedTime = 1000;
+    int amountOfUsers = favourUsers.length + againstUsers.length;
 
     RankRequestDTO request = new RankRequestDTO()
         .setRankings(getUserRankings())
-        .setCalculatedTime(calculatedTime);
+        .setCalculatedTime(lastCalculatedRank);
 
-    assertEquals(0, rankRepository.rankings.size());
+    assertEquals(amountOfUsers, rankRepository.rankings.size());
 
     val interactor = new UpdateRank(rankRepository, proposalsRepository, votesRepository,
         proposalsGateway);
@@ -137,9 +138,9 @@ public class UpdateRankTest {
       favourTotal += rank;
     }
 
-    for (int i = 0; i < aginstUsers.length; i++) {
+    for (int i = 0; i < againstUsers.length; i++) {
       val rank = random.nextDouble();
-      rankings.put(aginstUsers[i].getId(), rank);
+      rankings.put(againstUsers[i].getId(), rank);
       againstTotal += rank;
     }
 

@@ -36,8 +36,8 @@ public class VoteProposalTest {
     TokenUtils.generateKeys();
 
     proposalsRepository = new FakeProposalsRepository();
-    votesRepository = new FakeVotesRepository();
     rankRepository = new FakeRankRepository();
+    votesRepository = new FakeVotesRepository(rankRepository.rankings);
     eventsGateway = new FakeEventsGateway();
     proposalsGateway = new FakeProposalsGateway();
 

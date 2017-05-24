@@ -10,5 +10,6 @@ public class Proposal {
 
   private UUID id;
   private Long dueDate;
-  private boolean isActive;
+  private boolean active;
+  private boolean expired;
 }
