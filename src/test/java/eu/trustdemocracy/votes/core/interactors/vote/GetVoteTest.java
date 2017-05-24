@@ -75,7 +75,8 @@ public class GetVoteTest {
         .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
         .setProposalId(proposal.getId());
 
-    VoteResponseDTO responseDTO = new GetVote(votesRepository).execute(requestDTO);
+    VoteResponseDTO responseDTO = new GetVote(votesRepository, proposalsRepository)
+        .execute(requestDTO);
 
     assertEquals(user.getId(), responseDTO.getUserId());
     assertEquals(proposal.getId(), responseDTO.getProposalId());
@@ -102,6 +103,6 @@ public class GetVoteTest {
         .setProposalId(proposal.getId());
 
     assertThrows(ResourceNotFoundException.class,
-        () -> new GetVote(votesRepository).execute(requestDTO));
+        () -> new GetVote(votesRepository, proposalsRepository).execute(requestDTO));
   }
 }
