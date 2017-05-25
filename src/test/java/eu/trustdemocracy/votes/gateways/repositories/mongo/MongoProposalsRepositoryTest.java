@@ -40,7 +40,8 @@ public class MongoProposalsRepositoryTest {
 
     assertEquals(0L, collection.count());
 
-    proposalsRepository.upsert(proposal);
+    val existedBefore = proposalsRepository.upsert(proposal);
+    assertFalse(existedBefore);
 
     assertEquals(1L, collection.count());
 
