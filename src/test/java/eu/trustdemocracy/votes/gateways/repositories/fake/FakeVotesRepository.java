@@ -43,6 +43,12 @@ public class FakeVotesRepository implements VotesRepository {
   public Map<VoteOption, Double> findProposalResults(UUID proposalId) {
     ConcurrentMap<VoteOption, Double> accumulator = new ConcurrentHashMap<>();
 
+    for (val option : VoteOption.values()) {
+      if (!option.equals(VoteOption.WITHDRAW)) {
+        accumulator.put(option, 0.0);
+      }
+    }
+
     return votes.entrySet().stream()
         .reduce(accumulator,
             (map, entry) -> {
@@ -54,8 +60,7 @@ public class FakeVotesRepository implements VotesRepository {
               val rank = rankings.get(userId);
               val option = entry.getValue();
 
-              val count = map.get(option);
-              map.put(option, count == null ? rank : count + rank);
+              map.computeIfPresent(option, (o, current) ->  current + rank);
               return map;
             }, (map1, map2) -> Stream.of(map1, map2)
                 .parallel()
