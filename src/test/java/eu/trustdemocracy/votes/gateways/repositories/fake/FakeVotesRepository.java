@@ -40,7 +40,7 @@ public class FakeVotesRepository implements VotesRepository {
   }
 
   @Override
-  public Map<VoteOption, Double> findWithRank(UUID proposalId) {
+  public Map<VoteOption, Double> findProposalResults(UUID proposalId) {
     ConcurrentMap<VoteOption, Double> accumulator = new ConcurrentHashMap<>();
 
     return votes.entrySet().stream()
@@ -70,7 +70,7 @@ public class FakeVotesRepository implements VotesRepository {
   }
 
   @Override
-  public Vote findWithRank(UUID proposalId, UUID userId) {
+  public Vote findVoteInProposal(UUID proposalId, UUID userId) {
     val key = proposalId + "|" + userId;
     VoteOption option = votes.get(key);
     Double rank = lockedRanks.get(key);

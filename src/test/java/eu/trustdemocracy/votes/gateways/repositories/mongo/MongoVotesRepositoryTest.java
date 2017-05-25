@@ -12,7 +12,9 @@ import eu.trustdemocracy.votes.core.entities.Proposal;
 import eu.trustdemocracy.votes.core.entities.User;
 import eu.trustdemocracy.votes.core.entities.Vote;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
+import eu.trustdemocracy.votes.gateways.repositories.RankRepository;
 import eu.trustdemocracy.votes.gateways.repositories.VotesRepository;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import lombok.val;
@@ -23,8 +25,8 @@ import org.junit.jupiter.api.Test;
 public class MongoVotesRepositoryTest {
 
   private MongoCollection<Document> collection;
-  private MongoCollection<Document> ranks;
   private VotesRepository votesRepository;
+  private RankRepository rankRepository;
 
   private Random rand = new Random();
 
@@ -33,7 +35,7 @@ public class MongoVotesRepositoryTest {
     val fongo = new Fongo("test server");
     val db = fongo.getDatabase("test_database");
     collection = db.getCollection("votes");
-    ranks = db.getCollection("votes_rank");
+    rankRepository = new MongoRankRepository(db);
     votesRepository = new MongoVotesRepository(db);
   }
 
@@ -82,6 +84,27 @@ public class MongoVotesRepositoryTest {
     );
     val document = collection.find(condition).first();
     assertNull(document);
+  }
+
+  @Test
+  public void findProposalResults() {
+    val user = new User()
+        .setId(UUID.randomUUID());
+    val proposal = new Proposal()
+        .setId(UUID.randomUUID());
+    val vote = new Vote()
+        .setUser(user)
+        .setProposal(proposal)
+        .setOption(VoteOption.AGAINST);
+    votesRepository.upsert(vote);
+    assertEquals(1L, collection.count());
+
+    rankRepository.upsert(user.getId(), user.getRank());
+
+    Map<VoteOption, Double> results = votesRepository.findProposalResults(proposal.getId());
+
+    assertEquals(0.0, results.get(VoteOption.FAVOUR), 0.1);
+    assertEquals(user.getRank(), results.get(VoteOption.AGAINST), 0.1);
   }
 
 }

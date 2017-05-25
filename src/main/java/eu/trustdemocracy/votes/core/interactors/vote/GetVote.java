@@ -34,7 +34,7 @@ public class GetVote implements Interactor<GetVoteRequestDTO, VoteResponseDTO> {
           + propsoalId + "] does not exist or it is unpublished");
     }
 
-    val vote = votesRepository.findWithRank(propsoalId, user.getId());
+    val vote = votesRepository.findVoteInProposal(propsoalId, user.getId());
     vote.setProposal(proposal);
     return VoteMapper.createResponse(vote);
   }

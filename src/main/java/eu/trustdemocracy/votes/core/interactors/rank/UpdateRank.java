@@ -74,7 +74,7 @@ public class UpdateRank implements Interactor<RankRequestDTO, RankResponseDTO> {
               if (proposal.isExpired()) {
                 map.put(proposal, null);
               } else {
-                val options = votesRepository.findWithRank(proposal.getId());
+                val options = votesRepository.findProposalResults(proposal.getId());
                 map.put(proposal, options);
               }
               return map;

@@ -68,12 +68,12 @@ public class MongoVotesRepository implements VotesRepository {
   }
 
   @Override
-  public Map<VoteOption, Double> findWithRank(UUID proposalId) {
+  public Map<VoteOption, Double> findProposalResults(UUID proposalId) {
     return null;
   }
 
   @Override
-  public Vote findWithRank(UUID proposalId, UUID userId) {
+  public Vote findVoteInProposal(UUID proposalId, UUID userId) {
     return null;
   }
 

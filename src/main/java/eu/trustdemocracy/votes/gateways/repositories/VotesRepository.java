@@ -13,9 +13,9 @@ public interface VotesRepository {
 
   VoteOption remove(Vote vote);
 
-  Map<VoteOption, Double> findWithRank(UUID proposalId);
+  Map<VoteOption, Double> findProposalResults(UUID proposalId);
 
-  Vote findWithRank(UUID proposalId, UUID userId);
+  Vote findVoteInProposal(UUID proposalId, UUID userId);
 
   void updateExpired(Set<Proposal> expiredProposals);
 }
