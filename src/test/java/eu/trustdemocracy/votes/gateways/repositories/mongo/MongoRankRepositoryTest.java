@@ -45,4 +45,17 @@ public class MongoRankRepositoryTest {
     assertEquals(user.getRank(), document.getDouble("rank"));
   }
 
+  @Test
+  public void find() {
+    val user = new User()
+        .setId(UUID.randomUUID())
+        .setRank(rand.nextDouble());
+
+    rankRepository.upsert(user.getId(), user.getRank());
+
+    val foundRank = rankRepository.find(user.getId());
+
+    assertEquals(user.getRank(), foundRank);
+  }
+
 }
