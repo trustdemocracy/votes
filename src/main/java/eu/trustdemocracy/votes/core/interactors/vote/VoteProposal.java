@@ -11,9 +11,9 @@ import eu.trustdemocracy.votes.core.models.request.VoteRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.VoteResponseDTO;
 import eu.trustdemocracy.votes.gateways.EventsGateway;
 import eu.trustdemocracy.votes.gateways.ProposalsGateway;
-import eu.trustdemocracy.votes.gateways.ProposalsRepository;
-import eu.trustdemocracy.votes.gateways.RankRepository;
-import eu.trustdemocracy.votes.gateways.VotesRepository;
+import eu.trustdemocracy.votes.gateways.repositories.ProposalsRepository;
+import eu.trustdemocracy.votes.gateways.repositories.RankRepository;
+import eu.trustdemocracy.votes.gateways.repositories.VotesRepository;
 import lombok.val;
 
 public class VoteProposal implements Interactor<VoteRequestDTO, VoteResponseDTO> {

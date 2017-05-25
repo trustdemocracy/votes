@@ -6,8 +6,8 @@ import eu.trustdemocracy.votes.core.interactors.Interactor;
 import eu.trustdemocracy.votes.core.interactors.exceptions.ResourceNotFoundException;
 import eu.trustdemocracy.votes.core.models.request.GetVoteRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.VoteResponseDTO;
-import eu.trustdemocracy.votes.gateways.ProposalsRepository;
-import eu.trustdemocracy.votes.gateways.VotesRepository;
+import eu.trustdemocracy.votes.gateways.repositories.ProposalsRepository;
+import eu.trustdemocracy.votes.gateways.repositories.VotesRepository;
 import lombok.val;
 
 public class GetVote implements Interactor<GetVoteRequestDTO, VoteResponseDTO> {

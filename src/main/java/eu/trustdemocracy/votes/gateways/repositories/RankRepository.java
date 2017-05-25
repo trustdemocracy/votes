@@ -1,4 +1,4 @@
-package eu.trustdemocracy.votes.gateways;
+package eu.trustdemocracy.votes.gateways.repositories;
 
 import java.util.Map;
 import java.util.UUID;

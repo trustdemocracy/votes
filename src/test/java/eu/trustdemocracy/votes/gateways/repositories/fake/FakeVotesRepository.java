@@ -1,9 +1,10 @@
-package eu.trustdemocracy.votes.gateways;
+package eu.trustdemocracy.votes.gateways.repositories.fake;
 
 import eu.trustdemocracy.votes.core.entities.Proposal;
 import eu.trustdemocracy.votes.core.entities.User;
 import eu.trustdemocracy.votes.core.entities.Vote;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
+import eu.trustdemocracy.votes.gateways.repositories.VotesRepository;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

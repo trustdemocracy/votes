@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import eu.trustdemocracy.votes.core.models.request.ProposalRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.ProposalResponseDTO;
-import eu.trustdemocracy.votes.gateways.FakeProposalsRepository;
+import eu.trustdemocracy.votes.gateways.repositories.fake.FakeProposalsRepository;
 import eu.trustdemocracy.votes.gateways.FakeRankerGateway;
 import java.util.UUID;
 import lombok.val;

@@ -1,5 +1,6 @@
-package eu.trustdemocracy.votes.gateways;
+package eu.trustdemocracy.votes.gateways.repositories.fake;
 
+import eu.trustdemocracy.votes.gateways.repositories.RankRepository;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

@@ -4,7 +4,7 @@ import eu.trustdemocracy.votes.core.entities.utils.ProposalMapper;
 import eu.trustdemocracy.votes.core.interactors.Interactor;
 import eu.trustdemocracy.votes.core.models.request.ProposalRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.ProposalResponseDTO;
-import eu.trustdemocracy.votes.gateways.ProposalsRepository;
+import eu.trustdemocracy.votes.gateways.repositories.ProposalsRepository;
 import lombok.val;
 
 public class UnregisterProposal implements Interactor<ProposalRequestDTO, ProposalResponseDTO> {
