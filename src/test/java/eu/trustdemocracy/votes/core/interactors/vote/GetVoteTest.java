@@ -66,15 +66,6 @@ public class GetVoteTest {
       proposals.add(proposal);
       proposalsRepository.upsert(proposal);
     }
-
-    Map<UUID, Double> ranks = new HashMap<>();
-    ranks.put(user.getId(), updatedRank);
-
-    new UpdateRank(rankRepository, proposalsRepository, votesRepository,
-        new FakeProposalsGateway())
-        .execute(new RankRequestDTO()
-            .setCalculatedTime(System.currentTimeMillis())
-            .setRankings(ranks));
   }
 
   @Test
@@ -124,16 +115,18 @@ public class GetVoteTest {
 
   @Test
   public void getVoteInExpired() throws Exception {
+    val now = System.currentTimeMillis();
     Proposal proposal = proposals.stream()
-        .filter(p -> p.isExpired() && p.isActive())
+        .filter(p -> p.getDueDate() <= now && p.isActive())
         .findFirst()
         .orElseThrow(Exception::new);
 
     val option = VoteOption.AGAINST;
     val key = proposal.getId() + "|" + user.getId();
     votesRepository.votes.put(key, option);
-    votesRepository.lockedRanks.put(key, user.getRank());
-    
+
+    updateRank();
+
     GetVoteRequestDTO requestDTO = new GetVoteRequestDTO()
         .setUserToken(TokenUtils.createToken(user.getId(), user.getUsername()))
         .setProposalId(proposal.getId());
@@ -146,5 +139,16 @@ public class GetVoteTest {
     assertEquals(option, responseDTO.getOption());
     assertEquals(user.getRank(), responseDTO.getRank());
     assertTrue(responseDTO.isProposalLocked());
+  }
+
+  private void updateRank() {
+    Map<UUID, Double> ranks = new HashMap<>();
+    ranks.put(user.getId(), updatedRank);
+
+    new UpdateRank(rankRepository, proposalsRepository, votesRepository,
+        new FakeProposalsGateway())
+        .execute(new RankRequestDTO()
+            .setCalculatedTime(System.currentTimeMillis())
+            .setRankings(ranks));
   }
 }

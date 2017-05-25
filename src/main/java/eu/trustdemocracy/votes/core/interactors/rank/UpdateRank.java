@@ -41,20 +41,26 @@ public class UpdateRank implements Interactor<RankRequestDTO, RankResponseDTO> {
     assert requestDTO.getCalculatedTime() != null;
 
     Map<UUID, Double> rankings = requestDTO.getRankings();
-    val successful = rankRepository.upsertBatch(rankings);
 
     val activeProposals = proposalsRepository.findAllActive();
+
+    sealExpiredProposals(activeProposals, requestDTO.getCalculatedTime());
+
+    val successful = rankRepository.upsertBatch(rankings);
+
     val proposals = reduceVotes(activeProposals, requestDTO.getCalculatedTime());
 
     proposalsGateway.updateBatch(proposals);
 
-    Set<Proposal> expiredProposals = activeProposals.parallelStream()
-        .filter(p -> isExpired(p, requestDTO.getCalculatedTime()))
-        .collect(Collectors.toSet());
-
-    proposalsRepository.updateExpired(expiredProposals);
-
     return new RankResponseDTO().setSuccessful(successful);
+  }
+
+  private void sealExpiredProposals(Set<Proposal> activeProposals, long calculatedTime) {
+    Set<Proposal> expiredProposals = activeProposals.parallelStream()
+        .filter(p -> isExpired(p, calculatedTime))
+        .collect(Collectors.toSet());
+    votesRepository.updateExpired(expiredProposals);
+    proposalsRepository.updateExpired(expiredProposals);
   }
 
   private Map<Proposal, Map<VoteOption, Double>> reduceVotes(Set<Proposal> proposals,

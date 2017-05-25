@@ -7,6 +7,7 @@ import eu.trustdemocracy.votes.core.entities.VoteOption;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -77,6 +78,15 @@ public class FakeVotesRepository implements VotesRepository {
         .setProposal(new Proposal().setId(proposalId))
         .setUser(new User().setId(userId).setRank(rank))
         .setOption(option);
+  }
+
+  @Override
+  public void updateExpired(Set<Proposal> expiredProposals) {
+    for (val proposal : expiredProposals) {
+      for (val user : rankings.entrySet()) {
+        lockedRanks.put(proposal.getId() + "|" + user.getKey(), user.getValue());
+      }
+    }
   }
 
   private static String getKey(Vote vote) {
