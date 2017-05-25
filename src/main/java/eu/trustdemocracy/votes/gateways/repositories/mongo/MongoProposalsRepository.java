@@ -43,7 +43,14 @@ public class MongoProposalsRepository implements ProposalsRepository {
 
   @Override
   public Proposal find(UUID id) {
-    return null;
+    val condition = and(
+        eq("id", id.toString())
+    );
+    val document = collection.find(condition).first();
+    if (document == null) {
+      return null;
+    }
+    return buildFromDocument(document);
   }
 
   @Override
@@ -54,5 +61,13 @@ public class MongoProposalsRepository implements ProposalsRepository {
   @Override
   public void updateExpired(Set<Proposal> expiredProposals) {
 
+  }
+
+  private static Proposal buildFromDocument(Document document) {
+    return new Proposal()
+        .setId(UUID.fromString(document.getString("id")))
+        .setDueDate(document.getLong("dueDate"))
+        .setActive(document.getBoolean("active"))
+        .setExpired(document.getBoolean("expired"));
   }
 }

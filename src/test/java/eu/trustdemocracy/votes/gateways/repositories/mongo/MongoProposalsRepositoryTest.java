@@ -45,7 +45,6 @@ public class MongoProposalsRepositoryTest {
 
     assertEquals(1L, collection.count());
 
-
     val condition = and(
         eq("id", proposal.getId().toString())
     );
@@ -63,7 +62,6 @@ public class MongoProposalsRepositoryTest {
         .setId(UUID.randomUUID())
         .setDueDate(System.currentTimeMillis())
         .setActive(true);
-
 
     assertNull(proposalsRepository.find(proposal.getId()));
 
