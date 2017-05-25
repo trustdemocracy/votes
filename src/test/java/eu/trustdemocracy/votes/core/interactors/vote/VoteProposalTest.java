@@ -1,7 +1,6 @@
 package eu.trustdemocracy.votes.core.interactors.vote;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import eu.trustdemocracy.votes.core.entities.Proposal;
 import eu.trustdemocracy.votes.core.entities.User;
@@ -83,7 +82,7 @@ public class VoteProposalTest {
 
     val updatedProposal = proposalsGateway.proposals.get(proposalId);
     assertEquals(userRank, updatedProposal.get(VoteOption.FAVOUR), 0.1);
-    assertNull(updatedProposal.get(VoteOption.AGAINST));
+    assertEquals(0.0, updatedProposal.get(VoteOption.AGAINST), 0.1);
   }
 
   @Test
@@ -119,7 +118,7 @@ public class VoteProposalTest {
     assertEquals(user.getRank(), createdVote.getRank());
 
     val updatedProposal = proposalsGateway.proposals.get(proposalId);
-    assertNull(updatedProposal.get(VoteOption.FAVOUR));
+    assertEquals(0.0, updatedProposal.get(VoteOption.FAVOUR), 0.1);
     assertEquals(userRank, updatedProposal.get(VoteOption.AGAINST), 0.1);
   }
 
