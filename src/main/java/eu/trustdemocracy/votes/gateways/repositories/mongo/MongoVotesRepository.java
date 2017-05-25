@@ -4,6 +4,7 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.in;
 
+import com.mongodb.Block;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Accumulators;
@@ -138,7 +139,16 @@ public class MongoVotesRepository implements VotesRepository {
 
   @Override
   public void sealVotes(Set<Proposal> expiredProposals) {
-
+    for (val proposal : expiredProposals) {
+      collection.find(eq("proposalId", proposal.getId().toString()))
+          .forEach((Block<Document>) doc -> {
+            val id = doc.getString("userId");
+            val rankDoc = getRankCollection().find(eq("id", id)).first();
+            val rank = rankDoc.getDouble("rank") == null ? 0.0 : rankDoc.getDouble("rank");
+            doc.put("rank", rank);
+            collection.replaceOne(eq("_id", doc.getObjectId("_id")), doc);
+          });
+    }
   }
 
   private MongoCollection<Document> getRankCollection() {
