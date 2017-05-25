@@ -59,7 +59,7 @@ public class UpdateRank implements Interactor<RankRequestDTO, RankResponseDTO> {
     Set<Proposal> expiredProposals = activeProposals.parallelStream()
         .filter(p -> isExpired(p, calculatedTime))
         .collect(Collectors.toSet());
-    votesRepository.updateExpired(expiredProposals);
+    votesRepository.sealVotes(expiredProposals);
     proposalsRepository.updateExpired(expiredProposals);
   }
 

@@ -82,7 +82,7 @@ public class FakeVotesRepository implements VotesRepository {
   }
 
   @Override
-  public void updateExpired(Set<Proposal> expiredProposals) {
+  public void sealVotes(Set<Proposal> expiredProposals) {
     for (val proposal : expiredProposals) {
       for (val user : rankings.entrySet()) {
         lockedRanks.put(proposal.getId() + "|" + user.getKey(), user.getValue());

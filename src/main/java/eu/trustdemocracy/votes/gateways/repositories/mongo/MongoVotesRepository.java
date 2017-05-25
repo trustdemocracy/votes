@@ -137,7 +137,7 @@ public class MongoVotesRepository implements VotesRepository {
   }
 
   @Override
-  public void updateExpired(Set<Proposal> expiredProposals) {
+  public void sealVotes(Set<Proposal> expiredProposals) {
 
   }
 

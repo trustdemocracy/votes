@@ -14,6 +14,8 @@ import eu.trustdemocracy.votes.core.entities.Vote;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
 import eu.trustdemocracy.votes.gateways.repositories.RankRepository;
 import eu.trustdemocracy.votes.gateways.repositories.VotesRepository;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -131,5 +133,31 @@ public class MongoVotesRepositoryTest {
     assertEquals(0.0, voteFound.getUser().getRank(), 0.1);
     assertEquals(VoteOption.AGAINST, voteFound.getOption());
   }
-  
+
+
+  @Test
+  public void sealVotes() {
+    val user = new User()
+        .setId(UUID.randomUUID())
+        .setRank(rand.nextDouble());
+    val proposal = new Proposal()
+        .setId(UUID.randomUUID());
+    val vote = new Vote()
+        .setUser(user)
+        .setProposal(proposal)
+        .setOption(VoteOption.AGAINST);
+    votesRepository.upsert(vote);
+    assertEquals(1L, collection.count());
+    rankRepository.upsert(user.getId(), user.getRank());
+
+    votesRepository.sealVotes(new HashSet<>(Collections.singletonList(proposal)));
+
+    val voteFound = votesRepository.findVoteInProposal(vote.getProposal().getId(),
+        vote.getUser().getId());
+
+    assertEquals(vote.getProposal(), voteFound.getProposal());
+    assertEquals(vote.getUser().getId(), voteFound.getUser().getId());
+    assertEquals(vote.getUser().getRank(), voteFound.getUser().getRank(), 0.1);
+    assertEquals(VoteOption.AGAINST, voteFound.getOption());
+  }
 }

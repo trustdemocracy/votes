@@ -17,5 +17,5 @@ public interface VotesRepository {
 
   Vote findVoteInProposal(UUID proposalId, UUID userId);
 
-  void updateExpired(Set<Proposal> expiredProposals);
+  void sealVotes(Set<Proposal> expiredProposals);
 }
