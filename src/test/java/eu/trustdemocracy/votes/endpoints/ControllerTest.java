@@ -5,8 +5,11 @@ import eu.trustdemocracy.votes.infrastructure.FakeInteractorFactory;
 import eu.trustdemocracy.votes.infrastructure.InteractorFactory;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.rxjava.core.Vertx;
+import io.vertx.rxjava.core.buffer.Buffer;
+import io.vertx.rxjava.ext.web.client.HttpResponse;
 import io.vertx.rxjava.ext.web.client.WebClient;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -14,6 +17,7 @@ import lombok.val;
 import org.jose4j.lang.JoseException;
 import org.junit.After;
 import org.junit.Before;
+import rx.Single;
 
 public class ControllerTest {
 
@@ -46,6 +50,18 @@ public class ControllerTest {
   @After
   public void tearDown(TestContext context) {
     vertx.close(context.asyncAssertSuccess());
+  }
+
+  protected void assert200(TestContext context, Async async, Single<HttpResponse<Buffer>> single) {
+    single.subscribe(response -> {
+      context.assertEquals(response.statusCode(), 200);
+      context.assertTrue(response.headers().get("content-type").contains("application/json"));
+
+      async.complete();
+    }, error -> {
+      context.fail(error);
+      async.complete();
+    });
   }
 
 }

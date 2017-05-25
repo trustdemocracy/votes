@@ -2,9 +2,13 @@ package eu.trustdemocracy.votes.infrastructure;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoDatabase;
+import eu.trustdemocracy.votes.core.interactors.proposal.RegisterProposal;
+import eu.trustdemocracy.votes.core.interactors.proposal.UnregisterProposal;
 import eu.trustdemocracy.votes.core.interactors.rank.UpdateRank;
 import eu.trustdemocracy.votes.gateways.out.FakeProposalsGateway;
+import eu.trustdemocracy.votes.gateways.out.FakeRankerGateway;
 import eu.trustdemocracy.votes.gateways.out.ProposalsGateway;
+import eu.trustdemocracy.votes.gateways.out.RankerGateway;
 import eu.trustdemocracy.votes.gateways.repositories.ProposalsRepository;
 import eu.trustdemocracy.votes.gateways.repositories.RankRepository;
 import eu.trustdemocracy.votes.gateways.repositories.VotesRepository;
@@ -27,6 +31,16 @@ public class FakeInteractorFactory implements InteractorFactory {
     );
   }
 
+  @Override
+  public RegisterProposal getRegisterProposal() {
+    return new RegisterProposal(getProposalsRepository(), getRankerGateway());
+  }
+
+  @Override
+  public UnregisterProposal getUnregisterProposal() {
+    return new UnregisterProposal(getProposalsRepository());
+  }
+
   private RankRepository getRankRepository() {
     return new MongoRankRepository(getDB());
   }
@@ -41,6 +55,10 @@ public class FakeInteractorFactory implements InteractorFactory {
 
   private ProposalsGateway getProposalsGateway() {
     return new FakeProposalsGateway();
+  }
+
+  private RankerGateway getRankerGateway() {
+    return new FakeRankerGateway();
   }
 
   private MongoDatabase getDB() {

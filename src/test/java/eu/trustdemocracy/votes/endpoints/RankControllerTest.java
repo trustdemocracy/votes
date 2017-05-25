@@ -28,15 +28,7 @@ public class RankControllerTest extends ControllerTest {
     val single = client.post(port, HOST, "/rank")
         .rxSendJson(request);
 
-    single.subscribe(response -> {
-      context.assertEquals(response.statusCode(), 200);
-      context.assertTrue(response.headers().get("content-type").contains("application/json"));
-
-      async.complete();
-    }, error -> {
-      context.fail(error);
-      async.complete();
-    });
+    assert200(context, async, single);
   }
 
 }
