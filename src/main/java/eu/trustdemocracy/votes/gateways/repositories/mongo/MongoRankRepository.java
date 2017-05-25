@@ -32,7 +32,12 @@ public class MongoRankRepository implements RankRepository {
 
   @Override
   public Double find(UUID id) {
-    return null;
+    val condition = eq("id", id.toString());
+    val document = collection.find(condition).first();
+    if (document == null) {
+      return 0.0;
+    }
+    return document.getDouble("rank");
   }
 
   @Override
