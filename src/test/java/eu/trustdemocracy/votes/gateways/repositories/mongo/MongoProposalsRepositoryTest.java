@@ -1,6 +1,5 @@
 package eu.trustdemocracy.votes.gateways.repositories.mongo;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -49,9 +48,7 @@ public class MongoProposalsRepositoryTest {
 
     assertEquals(1L, collection.count());
 
-    val condition = and(
-        eq("id", proposal.getId().toString())
-    );
+    val condition = eq("id", proposal.getId().toString());
     val document = collection.find(condition).first();
     assertNotNull(document);
     assertEquals(proposal.getId(), UUID.fromString(document.getString("id")));
@@ -119,9 +116,7 @@ public class MongoProposalsRepositoryTest {
 
     proposalsRepository.updateExpired(new HashSet<>(proposalsToExpire));
 
-    val condition = and(
-        eq("expired", true)
-    );
+    val condition = eq("expired", true);
     assertEquals(proposalsToExpire.size(), collection.count(condition));
   }
 

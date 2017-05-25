@@ -2,6 +2,7 @@ package eu.trustdemocracy.votes.gateways.repositories.mongo;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -11,6 +12,7 @@ import eu.trustdemocracy.votes.gateways.repositories.ProposalsRepository;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.val;
 import org.bson.Document;
 
@@ -71,7 +73,14 @@ public class MongoProposalsRepository implements ProposalsRepository {
 
   @Override
   public void updateExpired(Set<Proposal> expiredProposals) {
+    val ids = expiredProposals.stream()
+        .map(p -> p.getId().toString())
+        .collect(Collectors.toSet());
 
+    collection.updateMany(
+        in("id", ids),
+        new Document("$set", new Document("expired", true))
+    );
   }
 
   private static Proposal buildFromDocument(Document document) {
