@@ -10,6 +10,7 @@ import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.UpdateOptions;
 import eu.trustdemocracy.votes.core.entities.Proposal;
+import eu.trustdemocracy.votes.core.entities.User;
 import eu.trustdemocracy.votes.core.entities.Vote;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
 import eu.trustdemocracy.votes.gateways.repositories.VotesRepository;
@@ -115,7 +116,24 @@ public class MongoVotesRepository implements VotesRepository {
 
   @Override
   public Vote findVoteInProposal(UUID proposalId, UUID userId) {
-    return null;
+
+    val condition = and(
+        eq("userId", userId.toString()),
+        eq("proposalId", proposalId.toString())
+    );
+    val voteDoc = collection.find(condition).first();
+    if (voteDoc == null) {
+      return null;
+    }
+
+    Double rank = voteDoc.getDouble("rank");
+    rank = rank == null ? 0.0 : rank;
+    val option = VoteOption.valueOf(voteDoc.getString("option"));
+
+    return new Vote()
+        .setProposal(new Proposal().setId(proposalId))
+        .setUser(new User().setId(userId).setRank(rank))
+        .setOption(option);
   }
 
   @Override

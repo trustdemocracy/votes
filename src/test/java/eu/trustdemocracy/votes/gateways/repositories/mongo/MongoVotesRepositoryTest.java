@@ -127,8 +127,9 @@ public class MongoVotesRepositoryTest {
         vote.getUser().getId());
 
     assertEquals(vote.getProposal(), voteFound.getProposal());
-    assertEquals(vote.getUser(), voteFound.getUser());
+    assertEquals(vote.getUser().getId(), voteFound.getUser().getId());
+    assertEquals(0.0, voteFound.getUser().getRank(), 0.1);
     assertEquals(VoteOption.AGAINST, voteFound.getOption());
   }
-
+  
 }
