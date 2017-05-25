@@ -89,7 +89,8 @@ public class MongoVotesRepositoryTest {
   @Test
   public void findProposalResults() {
     val user = new User()
-        .setId(UUID.randomUUID());
+        .setId(UUID.randomUUID())
+        .setRank(rand.nextDouble());
     val proposal = new Proposal()
         .setId(UUID.randomUUID());
     val vote = new Vote()

@@ -2,14 +2,20 @@ package eu.trustdemocracy.votes.gateways.repositories.mongo;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.UpdateOptions;
 import eu.trustdemocracy.votes.core.entities.Proposal;
 import eu.trustdemocracy.votes.core.entities.Vote;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
 import eu.trustdemocracy.votes.gateways.repositories.VotesRepository;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -21,6 +27,7 @@ public class MongoVotesRepository implements VotesRepository {
   private static final String RANK_COLLECTION = "votes_rank";
   private static final String VOTES_COLLECTION = "votes";
   private MongoCollection<Document> collection;
+  private MongoCollection<Document> rankCollection;
   private MongoDatabase db;
 
   public MongoVotesRepository(MongoDatabase db) {
@@ -69,7 +76,41 @@ public class MongoVotesRepository implements VotesRepository {
 
   @Override
   public Map<VoteOption, Double> findProposalResults(UUID proposalId) {
-    return null;
+    Map<VoteOption, Set<String>> userIds = new HashMap<>();
+
+    val votes = collection.find(eq("proposalId", proposalId.toString()));
+    for (val doc : votes) {
+      val option = VoteOption.valueOf(doc.getString("option"));
+      Set<String> set = userIds.get(option);
+      if (set == null) {
+        set = new HashSet<>();
+      }
+      set.add(doc.getString("userId"));
+      userIds.put(option, set);
+    }
+
+    Map<VoteOption, Double> results = new HashMap<>();
+
+    for (val option : VoteOption.values()) {
+      if (!option.equals(VoteOption.WITHDRAW)) {
+        results.put(option, 0.0);
+      }
+    }
+
+    for (val option : userIds.keySet()) {
+      val ids = userIds.get(option);
+
+      val total = getRankCollection().aggregate(Arrays.asList(
+          Aggregates.match(in("id", ids)),
+          Aggregates.group(null, Accumulators.sum("total", "$rank"))
+      ))
+          .first()
+          .getDouble("total");
+
+      results.put(option, total);
+    }
+
+    return results;
   }
 
   @Override
@@ -80,5 +121,12 @@ public class MongoVotesRepository implements VotesRepository {
   @Override
   public void updateExpired(Set<Proposal> expiredProposals) {
 
+  }
+
+  private MongoCollection<Document> getRankCollection() {
+    if (rankCollection == null) {
+      rankCollection = db.getCollection(RANK_COLLECTION);
+    }
+    return rankCollection;
   }
 }
