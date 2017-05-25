@@ -8,6 +8,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import eu.trustdemocracy.votes.core.entities.Proposal;
 import eu.trustdemocracy.votes.gateways.repositories.ProposalsRepository;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import lombok.val;
@@ -55,7 +56,17 @@ public class MongoProposalsRepository implements ProposalsRepository {
 
   @Override
   public Set<Proposal> findAllActive() {
-    return null;
+    Set<Proposal> proposals = new HashSet<>();
+
+    val condition = and(
+        eq("active", true)
+    );
+    val documents = collection.find(condition);
+    for (val document : documents) {
+      proposals.add(buildFromDocument(document));
+    }
+
+    return proposals;
   }
 
   @Override
