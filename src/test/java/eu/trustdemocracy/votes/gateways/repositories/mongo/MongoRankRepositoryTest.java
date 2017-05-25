@@ -8,6 +8,8 @@ import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoCollection;
 import eu.trustdemocracy.votes.core.entities.User;
 import eu.trustdemocracy.votes.gateways.repositories.RankRepository;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import lombok.val;
@@ -56,6 +58,23 @@ public class MongoRankRepositoryTest {
     val foundRank = rankRepository.find(user.getId());
 
     assertEquals(user.getRank(), foundRank);
+  }
+
+  @Test
+  public void upsertBatch() {
+    Map<UUID, Double> users = new HashMap<>();
+    for (int i = 0; i < 30; i++) {
+      val user = new User()
+          .setId(UUID.randomUUID())
+          .setRank(rand.nextDouble());
+      users.put(user.getId(), user.getRank());
+    }
+
+    assertEquals(0L, collection.count());
+
+    rankRepository.upsertBatch(users);
+
+    assertEquals(users.size(), collection.count());
   }
 
 }
