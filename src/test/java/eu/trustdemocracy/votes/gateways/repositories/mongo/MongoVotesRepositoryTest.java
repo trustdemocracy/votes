@@ -4,6 +4,7 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoCollection;
@@ -58,6 +59,29 @@ public class MongoVotesRepositoryTest {
     assertEquals(user.getId(), UUID.fromString(document.getString("userId")));
     assertEquals(proposal.getId(), UUID.fromString(document.getString("proposalId")));
     assertEquals(vote.getOption(), VoteOption.valueOf(document.getString("option")));
+  }
+
+  @Test
+  public void remove() {
+    val user = new User()
+        .setId(UUID.randomUUID());
+    val proposal = new Proposal()
+        .setId(UUID.randomUUID());
+    val vote = new Vote()
+        .setUser(user)
+        .setProposal(proposal)
+        .setOption(VoteOption.AGAINST);
+    votesRepository.upsert(vote);
+    assertEquals(1L, collection.count());
+
+    votesRepository.remove(vote);
+    assertEquals(1L, collection.count());
+    val condition = and(
+        eq("userId", user.getId().toString()),
+        eq("proposalId", proposal.getId().toString())
+    );
+    val document = collection.find(condition).first();
+    assertNull(document);
   }
 
 }
