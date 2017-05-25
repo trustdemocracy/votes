@@ -60,7 +60,7 @@ public class VoteProposal implements Interactor<VoteRequestDTO, VoteResponseDTO>
 
     val proposalResults = votesRepository.findProposalResults(proposal.getId());
 
-    proposalsGateway.update(proposal.getId(), proposalResults);
+    proposalsGateway.update(proposal, proposalResults);
     eventsGateway.createVoteEvent(vote, proposalResults);
 
     return VoteMapper.createResponse(vote);

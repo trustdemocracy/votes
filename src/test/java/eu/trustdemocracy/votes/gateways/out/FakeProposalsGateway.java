@@ -11,9 +11,10 @@ public class FakeProposalsGateway implements ProposalsGateway {
 
   public Map<UUID, Map<VoteOption, Double>> proposals = new HashMap<>();
 
+
   @Override
-  public void update(UUID proposalId, Map<VoteOption, Double> results) {
-    proposals.put(proposalId, results);
+  public void update(Proposal proposal, Map<VoteOption, Double> results) {
+    proposals.put(proposal.getId(), results);
   }
 
   @Override
