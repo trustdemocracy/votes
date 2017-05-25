@@ -13,6 +13,7 @@ import com.mongodb.client.MongoCollection;
 import eu.trustdemocracy.votes.core.entities.Proposal;
 import eu.trustdemocracy.votes.gateways.repositories.ProposalsRepository;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -97,6 +98,31 @@ public class MongoProposalsRepositoryTest {
     for (val proposal : activeProposals) {
       assertTrue(proposals.contains(proposal));
     }
+  }
+
+  @Test
+  public void updateExpired() {
+    List<Proposal> proposalsToExpire = new ArrayList<>();
+    for (int i = 0; i < 30; i++) {
+      val toExpire = i % 3 == 0;
+      val proposal = new Proposal()
+          .setId(UUID.randomUUID())
+          .setDueDate(System.currentTimeMillis())
+          .setActive(true);
+
+      if (toExpire) {
+        proposalsToExpire.add(proposal);
+      }
+
+      proposalsRepository.upsert(proposal);
+    }
+
+    proposalsRepository.updateExpired(new HashSet<>(proposalsToExpire));
+
+    val condition = and(
+        eq("expired", true)
+    );
+    assertEquals(proposalsToExpire.size(), collection.count(condition));
   }
 
 }
