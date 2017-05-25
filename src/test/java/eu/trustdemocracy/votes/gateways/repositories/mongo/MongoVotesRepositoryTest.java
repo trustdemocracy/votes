@@ -108,4 +108,27 @@ public class MongoVotesRepositoryTest {
     assertEquals(user.getRank(), results.get(VoteOption.AGAINST), 0.1);
   }
 
+  @Test
+  public void findVoteInProposal() {
+    val user = new User()
+        .setId(UUID.randomUUID())
+        .setRank(rand.nextDouble());
+    val proposal = new Proposal()
+        .setId(UUID.randomUUID());
+    val vote = new Vote()
+        .setUser(user)
+        .setProposal(proposal)
+        .setOption(VoteOption.AGAINST);
+    votesRepository.upsert(vote);
+    assertEquals(1L, collection.count());
+    rankRepository.upsert(user.getId(), user.getRank());
+
+    val voteFound = votesRepository.findVoteInProposal(vote.getProposal().getId(),
+        vote.getUser().getId());
+
+    assertEquals(vote.getProposal(), voteFound.getProposal());
+    assertEquals(vote.getUser(), voteFound.getUser());
+    assertEquals(VoteOption.AGAINST, voteFound.getOption());
+  }
+
 }
