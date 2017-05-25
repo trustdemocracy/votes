@@ -3,6 +3,7 @@ package eu.trustdemocracy.votes.gateways.repositories.mongo;
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoCollection;
@@ -72,7 +73,8 @@ public class MongoRankRepositoryTest {
 
     assertEquals(0L, collection.count());
 
-    rankRepository.upsertBatch(users);
+    val updatedAll = rankRepository.upsertBatch(users);
+    assertTrue(updatedAll);
 
     assertEquals(users.size(), collection.count());
   }

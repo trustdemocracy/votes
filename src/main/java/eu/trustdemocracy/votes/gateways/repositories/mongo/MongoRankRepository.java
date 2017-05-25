@@ -4,10 +4,13 @@ import static com.mongodb.client.model.Filters.eq;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.BulkWriteOptions;
+import com.mongodb.client.model.ReplaceOneModel;
 import com.mongodb.client.model.UpdateOptions;
 import eu.trustdemocracy.votes.gateways.repositories.RankRepository;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.val;
 import org.bson.Document;
 
@@ -42,6 +45,21 @@ public class MongoRankRepository implements RankRepository {
 
   @Override
   public boolean upsertBatch(Map<UUID, Double> rankings) {
-    return false;
+    val options = new UpdateOptions().upsert(true);
+    val result = collection.bulkWrite(
+        rankings.entrySet().stream()
+            .map(entry ->
+                new ReplaceOneModel<Document>(
+                    eq("id", entry.getKey()),
+                    new Document("id", entry.getKey())
+                        .append("rank", entry.getValue()),
+                    options
+                )
+            )
+            .collect(Collectors.toList()),
+        new BulkWriteOptions().ordered(false)
+    );
+
+    return result.getModifiedCount() == rankings.size();
   }
 }
