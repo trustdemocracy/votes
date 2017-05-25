@@ -1,4 +1,4 @@
-package eu.trustdemocracy.votes.gateways;
+package eu.trustdemocracy.votes.gateways.out;
 
 import eu.trustdemocracy.votes.core.entities.Vote;
 

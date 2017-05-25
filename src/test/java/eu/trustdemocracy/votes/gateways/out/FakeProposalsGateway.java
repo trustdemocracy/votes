@@ -1,8 +1,9 @@
-package eu.trustdemocracy.votes.gateways;
+package eu.trustdemocracy.votes.gateways.out;
 
 import eu.trustdemocracy.votes.core.entities.Proposal;
 import eu.trustdemocracy.votes.core.entities.Vote;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
+import eu.trustdemocracy.votes.gateways.out.ProposalsGateway;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

@@ -9,7 +9,7 @@ import eu.trustdemocracy.votes.core.entities.User;
 import eu.trustdemocracy.votes.core.entities.VoteOption;
 import eu.trustdemocracy.votes.core.models.request.RankRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.RankResponseDTO;
-import eu.trustdemocracy.votes.gateways.FakeProposalsGateway;
+import eu.trustdemocracy.votes.gateways.out.FakeProposalsGateway;
 import eu.trustdemocracy.votes.gateways.repositories.fake.FakeProposalsRepository;
 import eu.trustdemocracy.votes.gateways.repositories.fake.FakeRankRepository;
 import eu.trustdemocracy.votes.gateways.repositories.fake.FakeVotesRepository;

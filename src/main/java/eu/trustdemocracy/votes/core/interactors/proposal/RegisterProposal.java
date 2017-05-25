@@ -5,7 +5,7 @@ import eu.trustdemocracy.votes.core.interactors.Interactor;
 import eu.trustdemocracy.votes.core.models.request.ProposalRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.ProposalResponseDTO;
 import eu.trustdemocracy.votes.gateways.repositories.ProposalsRepository;
-import eu.trustdemocracy.votes.gateways.RankerGateway;
+import eu.trustdemocracy.votes.gateways.out.RankerGateway;
 import lombok.val;
 
 public class RegisterProposal implements Interactor<ProposalRequestDTO, ProposalResponseDTO> {

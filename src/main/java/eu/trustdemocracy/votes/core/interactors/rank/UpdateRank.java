@@ -5,7 +5,7 @@ import eu.trustdemocracy.votes.core.entities.VoteOption;
 import eu.trustdemocracy.votes.core.interactors.Interactor;
 import eu.trustdemocracy.votes.core.models.request.RankRequestDTO;
 import eu.trustdemocracy.votes.core.models.response.RankResponseDTO;
-import eu.trustdemocracy.votes.gateways.ProposalsGateway;
+import eu.trustdemocracy.votes.gateways.out.ProposalsGateway;
 import eu.trustdemocracy.votes.gateways.repositories.ProposalsRepository;
 import eu.trustdemocracy.votes.gateways.repositories.RankRepository;
 import eu.trustdemocracy.votes.gateways.repositories.VotesRepository;

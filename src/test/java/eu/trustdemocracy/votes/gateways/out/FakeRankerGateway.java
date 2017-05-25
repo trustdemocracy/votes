@@ -1,5 +1,6 @@
-package eu.trustdemocracy.votes.gateways;
+package eu.trustdemocracy.votes.gateways.out;
 
+import eu.trustdemocracy.votes.gateways.out.RankerGateway;
 import java.util.ArrayList;
 import java.util.List;
 
