@@ -1,6 +1,5 @@
 package eu.trustdemocracy.votes.gateways.repositories.mongo;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.in;
 
@@ -35,9 +34,7 @@ public class MongoProposalsRepository implements ProposalsRepository {
         .append("active", proposal.isActive())
         .append("expired", proposal.isExpired());
 
-    val condition = and(
-        eq("id", proposal.getId().toString())
-    );
+    val condition = eq("id", proposal.getId().toString());
     val options = new UpdateOptions().upsert(true);
     val updateResult = collection.replaceOne(condition, document, options);
 
@@ -46,9 +43,7 @@ public class MongoProposalsRepository implements ProposalsRepository {
 
   @Override
   public Proposal find(UUID id) {
-    val condition = and(
-        eq("id", id.toString())
-    );
+    val condition = eq("id", id.toString());
     val document = collection.find(condition).first();
     if (document == null) {
       return null;
@@ -60,9 +55,7 @@ public class MongoProposalsRepository implements ProposalsRepository {
   public Set<Proposal> findAllActive() {
     Set<Proposal> proposals = new HashSet<>();
 
-    val condition = and(
-        eq("active", true)
-    );
+    val condition = eq("active", true);
     val documents = collection.find(condition);
     for (val document : documents) {
       proposals.add(buildFromDocument(document));
