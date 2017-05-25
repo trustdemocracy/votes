@@ -5,6 +5,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.fakemongo.Fongo;
@@ -37,7 +38,6 @@ public class MongoProposalsRepositoryTest {
         .setDueDate(System.currentTimeMillis())
         .setActive(true);
 
-
     assertEquals(0L, collection.count());
 
     val existedBefore = proposalsRepository.upsert(proposal);
@@ -57,5 +57,19 @@ public class MongoProposalsRepositoryTest {
     assertFalse(document.getBoolean("expired"));
   }
 
+  @Test
+  public void findProposal() {
+    val proposal = new Proposal()
+        .setId(UUID.randomUUID())
+        .setDueDate(System.currentTimeMillis())
+        .setActive(true);
+
+
+    assertNull(proposalsRepository.find(proposal.getId()));
+
+    proposalsRepository.upsert(proposal);
+
+    assertEquals(proposal, proposalsRepository.find(proposal.getId()));
+  }
 
 }
