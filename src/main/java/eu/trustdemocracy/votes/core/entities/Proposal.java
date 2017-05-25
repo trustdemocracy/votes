@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 public class Proposal {
 
   private UUID id;
+  private String title;
   private Long dueDate;
   private boolean active;
   private boolean expired;

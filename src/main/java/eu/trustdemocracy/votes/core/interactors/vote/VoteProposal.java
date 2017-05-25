@@ -49,18 +49,19 @@ public class VoteProposal implements Interactor<VoteRequestDTO, VoteResponseDTO>
     }
     checkProposalIsValid(proposal);
 
-    VoteOption previousOption;
     if (isWithdrawing(vote)) {
-      previousOption = votesRepository.remove(vote);
+      votesRepository.remove(vote);
     } else {
-      previousOption = votesRepository.upsert(vote);
+      votesRepository.upsert(vote);
     }
 
     val rank = rankRepository.find(vote.getUser().getId());
     vote.getUser().setRank(rank);
 
-    proposalsGateway.updateProposal(vote, previousOption);
-    eventsGateway.createVoteEvent(vote);
+    val proposalResults = votesRepository.findProposalResults(proposal.getId());
+
+    proposalsGateway.update(proposal.getId(), proposalResults);
+    eventsGateway.createVoteEvent(vote, proposalResults);
 
     return VoteMapper.createResponse(vote);
   }
