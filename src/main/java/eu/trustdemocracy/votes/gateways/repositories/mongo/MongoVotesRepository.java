@@ -49,7 +49,22 @@ public class MongoVotesRepository implements VotesRepository {
 
   @Override
   public VoteOption remove(Vote vote) {
-    return null;
+    val userId = vote.getUser().getId();
+    val proposalId = vote.getProposal().getId();
+
+    val condition = and(
+        eq("userId", userId.toString()),
+        eq("proposalId", proposalId.toString())
+    );
+
+    val document = collection.find(condition).first();
+    if (document == null) {
+      return null;
+    }
+
+    collection.deleteOne(eq("_id", document.getObjectId("_id")));
+
+    return VoteOption.valueOf(document.getString("option"));
   }
 
   @Override

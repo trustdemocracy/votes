@@ -75,7 +75,7 @@ public class MongoVotesRepositoryTest {
     assertEquals(1L, collection.count());
 
     votesRepository.remove(vote);
-    assertEquals(1L, collection.count());
+    assertEquals(0L, collection.count());
     val condition = and(
         eq("userId", user.getId().toString()),
         eq("proposalId", proposal.getId().toString())
