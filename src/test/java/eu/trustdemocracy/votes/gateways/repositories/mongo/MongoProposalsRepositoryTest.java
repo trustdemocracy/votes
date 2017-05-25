@@ -12,6 +12,9 @@ import com.github.fakemongo.Fongo;
 import com.mongodb.client.MongoCollection;
 import eu.trustdemocracy.votes.core.entities.Proposal;
 import eu.trustdemocracy.votes.gateways.repositories.ProposalsRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.val;
 import org.bson.Document;
@@ -68,6 +71,32 @@ public class MongoProposalsRepositoryTest {
     proposalsRepository.upsert(proposal);
 
     assertEquals(proposal, proposalsRepository.find(proposal.getId()));
+  }
+
+  @Test
+  public void findAllActive() {
+    List<Proposal> activeProposals = new ArrayList<>();
+    for (int i = 0; i < 30; i++) {
+      val active = i % 3 == 0;
+      val proposal = new Proposal()
+          .setId(UUID.randomUUID())
+          .setDueDate(System.currentTimeMillis())
+          .setActive(active);
+
+      if (active) {
+        activeProposals.add(proposal);
+      }
+
+      proposalsRepository.upsert(proposal);
+    }
+
+    Set<Proposal> proposals = proposalsRepository.findAllActive();
+
+    assertEquals(activeProposals.size(), proposals.size());
+
+    for (val proposal : activeProposals) {
+      assertTrue(proposals.contains(proposal));
+    }
   }
 
 }
