@@ -67,7 +67,7 @@ public class UpdateRank implements Interactor<RankRequestDTO, RankResponseDTO> {
       long calculatedTime) {
     Map<Proposal, Map<VoteOption, Double>> result = new HashMap<>();
 
-    return proposals.parallelStream()
+    return proposals.stream()
         .map(p -> p.setExpired(isExpired(p, calculatedTime)))
         .reduce(result,
             (map, proposal) -> {
