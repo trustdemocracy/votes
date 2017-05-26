@@ -1,6 +1,6 @@
 package eu.trustdemocracy.votes.endpoints;
 
-import eu.trustdemocracy.votes.core.models.response.ProposalResponseDTO;
+import eu.trustdemocracy.votes.core.models.request.ProposalRequestDTO;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import java.util.UUID;
@@ -15,7 +15,7 @@ public class ProposalControllerTest extends ControllerTest {
   public void registerProposal(TestContext context) {
     val async = context.async();
 
-    val request = new ProposalResponseDTO()
+    val request = new ProposalRequestDTO()
         .setDueDate(System.currentTimeMillis())
         .setId(UUID.randomUUID());
 
@@ -29,7 +29,7 @@ public class ProposalControllerTest extends ControllerTest {
   public void unregisterProposal(TestContext context) {
     val async = context.async();
 
-    val request = new ProposalResponseDTO()
+    val request = new ProposalRequestDTO()
         .setDueDate(System.currentTimeMillis())
         .setId(UUID.randomUUID());
 

@@ -3,6 +3,9 @@ package eu.trustdemocracy.votes.infrastructure;
 import eu.trustdemocracy.votes.core.interactors.proposal.RegisterProposal;
 import eu.trustdemocracy.votes.core.interactors.proposal.UnregisterProposal;
 import eu.trustdemocracy.votes.core.interactors.rank.UpdateRank;
+import eu.trustdemocracy.votes.core.interactors.vote.GetVote;
+import eu.trustdemocracy.votes.core.interactors.vote.VoteProposal;
+import eu.trustdemocracy.votes.gateways.out.EventsGateway;
 import eu.trustdemocracy.votes.gateways.out.ProposalsGateway;
 import eu.trustdemocracy.votes.gateways.out.RankerGateway;
 import eu.trustdemocracy.votes.gateways.repositories.ProposalsRepository;
@@ -43,6 +46,25 @@ public class DefaultInteractorFactory implements InteractorFactory {
     return new UnregisterProposal(getProposalsRepository());
   }
 
+  @Override
+  public VoteProposal getVoteProposal() {
+    return new VoteProposal(
+        getVotesRepository(),
+        getProposalsRepository(),
+        getRankRepository(),
+        getEventsGateway(),
+        getProposalsGateway()
+    );
+  }
+
+  @Override
+  public GetVote getGetVote() {
+    return new GetVote(
+        getVotesRepository(),
+        getProposalsRepository()
+    );
+  }
+
   private RankRepository getRankRepository() {
     return null;
   }
@@ -60,6 +82,10 @@ public class DefaultInteractorFactory implements InteractorFactory {
   }
 
   private RankerGateway getRankerGateway() {
+    return null;
+  }
+
+  private EventsGateway getEventsGateway() {
     return null;
   }
 }

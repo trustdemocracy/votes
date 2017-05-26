@@ -102,12 +102,15 @@ public class MongoVotesRepository implements VotesRepository {
     for (val option : userIds.keySet()) {
       val ids = userIds.get(option);
 
-      val total = getRankCollection().aggregate(Arrays.asList(
+      val totalDoc = getRankCollection().aggregate(Arrays.asList(
           Aggregates.match(in("id", ids)),
           Aggregates.group(null, Accumulators.sum("total", "$rank"))
-      ))
-          .first()
-          .getDouble("total");
+      )).first();
+
+      Double total = 0.0;
+      if (totalDoc != null) {
+        total = totalDoc.getDouble("total");
+      }
 
       results.put(option, total);
     }
