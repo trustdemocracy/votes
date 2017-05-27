@@ -50,8 +50,8 @@ public class MongoRankRepository implements RankRepository {
         rankings.entrySet().stream()
             .map(entry ->
                 new ReplaceOneModel<Document>(
-                    eq("id", entry.getKey()),
-                    new Document("id", entry.getKey())
+                    eq("id", entry.getKey().toString()),
+                    new Document("id", entry.getKey().toString())
                         .append("rank", entry.getValue()),
                     options
                 )
@@ -60,6 +60,6 @@ public class MongoRankRepository implements RankRepository {
         new BulkWriteOptions().ordered(false)
     );
 
-    return result.getModifiedCount() == rankings.size();
+    return (result.getModifiedCount() + result.getInsertedCount()) == rankings.size();
   }
 }
