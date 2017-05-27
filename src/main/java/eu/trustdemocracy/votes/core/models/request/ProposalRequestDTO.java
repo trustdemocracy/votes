@@ -10,5 +10,6 @@ import lombok.experimental.Accessors;
 public class ProposalRequestDTO {
 
   private UUID id;
+  private String title;
   private Long dueDate;
 }

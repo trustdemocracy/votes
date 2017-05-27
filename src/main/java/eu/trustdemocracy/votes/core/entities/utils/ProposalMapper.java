@@ -9,6 +9,7 @@ public final class ProposalMapper {
   public static Proposal createEntity(ProposalRequestDTO requestDTO) {
     return new Proposal()
         .setId(requestDTO.getId())
+        .setTitle(requestDTO.getTitle())
         .setDueDate(requestDTO.getDueDate());
   }
 
