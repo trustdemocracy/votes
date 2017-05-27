@@ -48,6 +48,7 @@ public class VoteProposal implements Interactor<VoteRequestDTO, VoteResponseDTO>
           + vote.getProposal().getId() + "]");
     }
     checkProposalIsValid(proposal);
+    vote.setProposal(proposal);
 
     if (isWithdrawing(vote)) {
       votesRepository.remove(vote);

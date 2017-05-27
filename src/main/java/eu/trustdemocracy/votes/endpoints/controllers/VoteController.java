@@ -1,5 +1,7 @@
 package eu.trustdemocracy.votes.endpoints.controllers;
 
+import eu.trustdemocracy.votes.core.interactors.exceptions.InvalidTokenException;
+import eu.trustdemocracy.votes.core.interactors.exceptions.ResourceNotFoundException;
 import eu.trustdemocracy.votes.core.models.request.GetVoteRequestDTO;
 import eu.trustdemocracy.votes.core.models.request.VoteRequestDTO;
 import eu.trustdemocracy.votes.endpoints.App;
@@ -21,31 +23,46 @@ public class VoteController extends Controller {
   }
 
   private void vote(RoutingContext context) {
-    val request = Json.decodeValue(context.getBodyAsString(), VoteRequestDTO.class);
-    request.setProposalId(UUID.fromString(context.pathParam("proposalId")));
-    val authToken = getAuthorizationToken(context.request());
-    request.setUserToken(authToken);
+    try {
+      val request = Json.decodeValue(context.getBodyAsString(), VoteRequestDTO.class);
+      request.setProposalId(UUID.fromString(context.pathParam("proposalId")));
+      val authToken = getAuthorizationToken(context.request());
+      request.setUserToken(authToken);
 
-    val interactor = getInteractorFactory().getVoteProposal();
+      val interactor = getInteractorFactory().getVoteProposal();
 
-    val responseDTO = interactor.execute(request);
+      val responseDTO = interactor.execute(request);
 
-    serveJsonResponse(context, 200, Json.encodePrettily(responseDTO));
+      serveJsonResponse(context, 200, Json.encodePrettily(responseDTO));
+    } catch (ResourceNotFoundException e) {
+      serveNotFound(context);
+    } catch (InvalidTokenException e) {
+      serveBadCredentials(context);
+    } catch (Exception e) {
+      serveBadRequest(context);
+    }
   }
 
   private void getVote(RoutingContext context) {
-    val authToken = getAuthorizationToken(context.request());
+    try {
+      val authToken = getAuthorizationToken(context.request());
 
-    val request = new GetVoteRequestDTO()
-        .setProposalId(UUID.fromString(context.pathParam("proposalId")))
-        .setUserToken(authToken);
+      val request = new GetVoteRequestDTO()
+          .setProposalId(UUID.fromString(context.pathParam("proposalId")))
+          .setUserToken(authToken);
 
-    val interactor = getInteractorFactory().getGetVote();
+      val interactor = getInteractorFactory().getGetVote();
 
-    val responseDTO = interactor.execute(request);
+      val responseDTO = interactor.execute(request);
 
-    serveJsonResponse(context, 200, Json.encodePrettily(responseDTO));
-
+      serveJsonResponse(context, 200, Json.encodePrettily(responseDTO));
+    } catch (ResourceNotFoundException e) {
+      serveNotFound(context);
+    } catch (InvalidTokenException e) {
+      serveBadCredentials(context);
+    } catch (Exception e) {
+      serveBadRequest(context);
+    }
   }
 
 }

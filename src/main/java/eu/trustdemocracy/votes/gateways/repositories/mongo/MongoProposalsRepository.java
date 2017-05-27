@@ -30,6 +30,7 @@ public class MongoProposalsRepository implements ProposalsRepository {
   @Override
   public boolean upsert(Proposal proposal) {
     val document = new Document("id", proposal.getId().toString())
+        .append("title", proposal.getTitle())
         .append("dueDate", proposal.getDueDate())
         .append("active", proposal.isActive())
         .append("expired", proposal.isExpired());
@@ -79,6 +80,7 @@ public class MongoProposalsRepository implements ProposalsRepository {
   private static Proposal buildFromDocument(Document document) {
     return new Proposal()
         .setId(UUID.fromString(document.getString("id")))
+        .setTitle(document.getString("title"))
         .setDueDate(document.getLong("dueDate"))
         .setActive(document.getBoolean("active"))
         .setExpired(document.getBoolean("expired"));

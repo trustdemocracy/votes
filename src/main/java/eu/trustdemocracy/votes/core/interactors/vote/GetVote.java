@@ -35,6 +35,9 @@ public class GetVote implements Interactor<GetVoteRequestDTO, VoteResponseDTO> {
     }
 
     val vote = votesRepository.findVoteInProposal(propsoalId, user.getId());
+    if (vote == null) {
+      return null;
+    }
     vote.setProposal(proposal);
     return VoteMapper.createResponse(vote);
   }
